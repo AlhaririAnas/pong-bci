@@ -2,7 +2,7 @@
 Game Configuration Module
 """
 from typing import Dict, Tuple
-from game_objects import Difficulty
+from ponggame.game_objects import Difficulty
 class GameConfig:
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT = 600

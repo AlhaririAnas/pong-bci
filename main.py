@@ -3,7 +3,7 @@ Main Entry Point
 Starts the Pong game application.
 """
 
-from game import PongGame
+from ponggame.game import PongGame
 
 
 def main():

@@ -5,8 +5,8 @@ Handles all UI drawing including menus, scores, and game state overlays.
 
 import pygame
 from typing import Tuple, List, Dict
-from game_objects import Difficulty
-from game_config import GameConfig
+from ponggame.game_objects import Difficulty
+from ponggame.game_config import GameConfig
 
 
 class UIRenderer:
