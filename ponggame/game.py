@@ -7,10 +7,10 @@ import pygame
 import sys
 from typing import Optional, List, Tuple, Dict
 
-from game_objects import Paddle, Ball, BotController, Difficulty
-from game_config import GameConfig
-from game_state import GameState, ScoreManager
-from ui_renderer import UIRenderer
+from ponggame.game_objects import Paddle, Ball, BotController, Difficulty
+from ponggame.game_config import GameConfig
+from ponggame.game_state import GameState, ScoreManager
+from ponggame.ui_renderer import UIRenderer
 
 
 class PongGame:
