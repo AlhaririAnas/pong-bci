@@ -165,3 +165,80 @@ class Ball(GameObject):
         """
         ball_rect = pygame.Rect(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)
         return ball_rect.colliderect(paddle.get_rect())
+
+
+class BotController:
+    """
+    AI controller for automated paddle movement.
+    Simulates reaction delay, limited accuracy, and speed depending on difficulty.
+    """
+    def __init__(self, difficulty: Difficulty):
+        self.difficulty = difficulty
+        self.smoothing_factor = self._get_smoothing_factor()
+        self.accuracy = self._get_accuracy()
+        self.reaction_delay = 0
+        self.max_reaction_delay = self._get_max_delay()
+
+    def _get_smoothing_factor(self) -> float:
+        """
+        Define how smoothly the paddle moves depending on difficulty.
+        A low value means slower adjustments.
+        """
+        smoothing_map = {
+            Difficulty.VERY_EASY: 0.025,   # very slow
+            Difficulty.EASY: 0.04,
+            Difficulty.MEDIUM: 0.08,
+            Difficulty.HARD: 0.14
+        }
+        return smoothing_map.get(self.difficulty, 0.04)
+
+    def _get_accuracy(self) -> float:
+        """
+        Defines how accurately the bot aims. Higher means fewer mistakes.
+        """
+        accuracy_map = {
+            Difficulty.VERY_EASY: 0.45,    # makes many mistakes
+            Difficulty.EASY: 0.65,
+            Difficulty.MEDIUM: 0.85,
+            Difficulty.HARD: 0.97
+        }
+        return accuracy_map.get(self.difficulty, 0.65)
+
+    def _get_max_delay(self) -> int:
+        """
+        Defines the reaction delay before the bot updates its position.
+        """
+        delay_map = {
+            Difficulty.VERY_EASY: 22,      # very slow reaction
+            Difficulty.EASY: 14,
+            Difficulty.MEDIUM: 6,
+            Difficulty.HARD: 1
+        }
+        return delay_map.get(self.difficulty, 14)
+
+    def update(self, paddle: Paddle, ball: Ball, screen_height: int) -> None:
+        """
+        Update the bot paddle position based on ball location.
+        Includes inaccuracy and reaction delays to simulate human-like behavior.
+        """
+        # Wait until the reaction delay expires
+        if self.reaction_delay > 0:
+            self.reaction_delay -= 1
+            paddle.smooth_move_to(paddle.target_y, self.smoothing_factor, screen_height)
+            return
+
+        # Aim for the ball’s vertical position
+        target_y = ball.y - paddle.height / 2
+
+        # Introduce random errors based on accuracy
+        if random.random() > self.accuracy:
+            error_range = 60 if self.difficulty == Difficulty.VERY_EASY else \
+                          30 if self.difficulty == Difficulty.EASY else \
+                          16 if self.difficulty == Difficulty.MEDIUM else 7
+            target_y += random.uniform(-error_range, error_range)
+
+        # Move towards the target smoothly
+        paddle.smooth_move_to(target_y, self.smoothing_factor, screen_height)
+
+        # Reset the reaction delay after each move
+        self.reaction_delay = random.randint(0, self.max_reaction_delay)
